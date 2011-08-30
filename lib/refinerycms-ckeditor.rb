@@ -36,8 +36,8 @@ end
 # Add engine
 ::Refinery.engines << "ckeditor"
 
-# Load editor
-Refinery.editor = Refinery::Ckeditor
-
-# Include helper
-::Refinery::ApplicationHelper.send :include, CkeditorHelper
+## Load editor
+#Refinery.editor = Refinery::Ckeditor
+#
+## Include helper
+#::Refinery::ApplicationHelper.send :include, CkeditorHelper
