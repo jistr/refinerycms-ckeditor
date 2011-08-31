@@ -158,11 +158,14 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 			else
 				ratioButton.addClass( 'cke_btn_unlocked' );
 
-			var lang = dialog._.editor.lang.image,
-				label =  lang[  dialog.lockRatio ? 'unlockRatio' : 'lockRatio' ];
+			ratioButton.setAttribute( 'aria-checked', dialog.lockRatio );
 
-			ratioButton.setAttribute( 'title', label );
-			ratioButton.getFirst().setText( label );
+			// Ratio button hc presentation - WHITE SQUARE / BLACK SQUARE
+			if ( CKEDITOR.env.hc )
+			{
+				var icon = ratioButton.getChild( 0 );
+				icon.setHtml(  dialog.lockRatio ? CKEDITOR.env.ie ? '\u25A0': '\u25A3' : CKEDITOR.env.ie ? '\u25A1' : '\u25A2' );
+			}
 
 			return dialog.lockRatio;
 		};
@@ -780,7 +783,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 																			updatePreview( this );
 																		}
 																	}
-																	evt.data.preventDefault();
+																	evt.data && evt.data.preventDefault();
 																}, this.getDialog() );
 															ratioButton.on( 'mouseover', function()
 																{
@@ -793,8 +796,8 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 														}
 													},
 													html : '<div>'+
-														'<a href="javascript:void(0)" tabindex="-1" title="' + editor.lang.image.unlockRatio +
-														'" class="cke_btn_locked" id="' + btnLockSizesId + '" role="button"><span class="cke_label">' + editor.lang.image.unlockRatio + '</span></a>' +
+														'<a href="javascript:void(0)" tabindex="-1" title="' + editor.lang.image.lockRatio +
+														'" class="cke_btn_locked" id="' + btnLockSizesId + '" role="checkbox"><span class="cke_icon"></span><span class="cke_label">' + editor.lang.image.lockRatio + '</span></a>' +
 														'<a href="javascript:void(0)" tabindex="-1" title="' + editor.lang.image.resetSize +
 														'" class="cke_btn_reset" id="' + btnResetSizeId + '" role="button"><span class="cke_label">' + editor.lang.image.resetSize + '</span></a>'+
 														'</div>'
@@ -998,8 +1001,16 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 													[
 														[ editor.lang.common.notSet , ''],
 														[ editor.lang.common.alignLeft , 'left'],
-														[ editor.lang.common.alignRight , 'right'],
-														[ editor.lang.common.alignMiddle , 'middle']
+														[ editor.lang.common.alignRight , 'right']
+														// Backward compatible with v2 on setup when specified as attribute value,
+														// while these values are no more available as select options.
+														//	[ editor.lang.image.alignAbsBottom , 'absBottom'],
+														//	[ editor.lang.image.alignAbsMiddle , 'absMiddle'],
+														//  [ editor.lang.image.alignBaseline , 'baseline'],
+														//  [ editor.lang.image.alignTextTop , 'text-top'],
+														//  [ editor.lang.image.alignBottom , 'bottom'],
+														//  [ editor.lang.image.alignMiddle , 'middle'],
+														//  [ editor.lang.image.alignTop , 'top']
 													],
 													onChange : function()
 													{
@@ -1010,12 +1021,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 													{
 														if ( type == IMAGE )
 														{
-                              console.log(element.getStyle('display'));
-                              console.log(element.getAttribute('style'));
-                              if(element.getStyle('display') == 'block') 
-                                this.setValue('middle');
-															
-                                var value = element.getStyle( 'float' );
+															var value = element.getStyle( 'float' );
 															switch( value )
 															{
 																// Ignore those unrelated values.
@@ -1023,8 +1029,6 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 																case 'none':
 																	value = '';
 															}
-                              if(element.getAttribute('style') && element.getAttribute('style').indexOf('display: block; margin-left: auto; margin-right: auto') > -1)
-                                value = 'middle'; 
 
 															!value && ( value = ( element.getAttribute( 'align' ) || '' ).toLowerCase() );
 															this.setValue( value );
@@ -1035,18 +1039,10 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 														var value = this.getValue();
 														if ( type == IMAGE || type == PREVIEW )
 														{
-															if ( value == 'middle' ) {
-                                element.setStyle( 'display', 'block' );
-                                element.setStyle( 'margin-left', 'auto' );
-                                element.setStyle( 'margin-right', 'auto' );
-                              } else if ( value ) {
+															if ( value )
 																element.setStyle( 'float', value );
-                              } else {
+															else
 																element.removeStyle( 'float' );
-                                element.removeStyle( 'display' );
-                                element.removeStyle( 'margin-left' );
-                                element.removeStyle( 'margin-right' );
-                              }
 
 															if ( !internalCommit && type == IMAGE )
 															{
@@ -1147,58 +1143,6 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 							hidden : true,
 							label : editor.lang.common.browseServer
 						},
-            {
-              type : 'checkbox',
-              id : 'txtLightboxChk',
-              isChanged : false,
-              style: 'float:left',
-              label : 'Lightbox',
-              setup: function(type, element) {
-                if(type==LINK) {
-                  cls = (element.getAttribute('class') || '');
-                  if(cls.indexOf('lightbox') > -1) {
-                    this.setValue(true);
-                  } else {
-                    this.setValue(false);
-                  }
-                }
-              },
-              commit: function(type, element) {
-                if(type == LINK) {
-                  if(this.getValue()) {
-                    element.addClass('lightbox');
-                  } else {
-                    element.removeClass('lightbox');
-                  }
-                }
-              }
-            },
-            {
-              type : 'checkbox',
-              id : 'txtLightboxSwfChk',
-              isChanged : false,
-              style: 'float:left',
-              label : 'Open flash in lightbox',
-              setup: function(type, element) {
-                if(type==LINK) {
-                  cls = (element.getAttribute('class') || '');
-                  if(cls.indexOf('swf') > -1) {
-                    this.setValue(true);
-                  } else {
-                    this.setValue(false);
-                  }
-                }
-              },
-              commit: function(type, element) {
-                if(type == LINK) {
-                  if(this.getValue()) {
-                    element.addClass('swf');
-                  } else {
-                    element.removeClass('swf');
-                  }
-                }
-              }
-            },
 						{
 							id : 'cmbTarget',
 							type : 'select',
