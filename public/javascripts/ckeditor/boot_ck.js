@@ -1,25 +1,27 @@
-﻿$(function()
-{
-	var config = {
-	//	toolbar:
-	//	[
-	//		['bold', 'italic', '-', 'numberedlist', 'bulletedlist', '-', 'link', 'unlink'],
-	//		['uicolor']
-	//	],i
+﻿CKEDITOR.replaceByClassEnabled = false;
+
+$(document).ready(function() {
+  var config = {
+  //  toolbar:
+  //  [
+  //    ['bold', 'italic', '-', 'numberedlist', 'bulletedlist', '-', 'link', 'unlink'],
+  //    ['uicolor']
+  //  ],i
     filebrowserImageBrowseUrl: '/refinery/images/insert?modal=true',
-    filebrowserLinkBrowseUrl: '/refinery/pages_dialogs/link_to?wymeditor=true',
+  //  filebrowserLinkBrowseUrl: '/refinery/pages_dialogs/link_to?wymeditor=true',
     extraPlugins: 'stylesheetparser,MediaEmbed',
-    contentsCss: '/stylesheets/ckeditor/suneditor.css',
+    contentsCss: '/stylesheets/ckeditor_content.css',
     entities: false
-	};
+  };
 
-	// Initialize the editor.
-	// Callback function can be passed and executed after full instance creation.
-	$('textarea.ckeditor').ckeditor(config);
-
+  // Initialize the editor.
+  // Callback function can be passed and executed after full instance creation.
+  $('textarea.ckeditor').ckeditor(CUSTOM_CKEDITOR_CONFIG || config);
 });
+
 // CK dialogs
 
+/*
 var image_dialog = {
   initialised: false
   , image_url: ''
@@ -344,4 +346,4 @@ onCloseDialog = function(dialog) {
        $(document.body).removeClass('hide-overflow');
   // }
 };
-
+*/
