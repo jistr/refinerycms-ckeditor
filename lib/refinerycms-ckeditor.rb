@@ -1,5 +1,4 @@
 require 'refinerycms-base'
-require File.expand_path('../../app/helpers/ckeditor_helper', __FILE__)
 
 module Refinery
   module Ckeditor
@@ -36,8 +35,3 @@ end
 # Add engine
 ::Refinery.engines << "ckeditor"
 
-## Load editor
-#Refinery.editor = Refinery::Ckeditor
-#
-## Include helper
-#::Refinery::ApplicationHelper.send :include, CkeditorHelper
