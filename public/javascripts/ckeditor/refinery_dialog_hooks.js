@@ -12,13 +12,13 @@ var ckeditorRefineryHooks = {
 
   initializeImageHooks: function () {
     close_buttons = $('.close_dialog.button');
-    submit_buttons = $('.wymupdate.button');
+    submit_button = $('#existing_image_area .wymupdate.button');
 
     close_buttons.unbind();
-    submit_buttons.unbind();
+    submit_button.unbind();
 
     close_buttons.click(this.closeImageDialog);
-    submit_buttons.click(this.submitImageDialog);
+    submit_button.click(this.submitImageDialog);
   },
 
   closeImageDialog: function () {
@@ -28,8 +28,7 @@ var ckeditorRefineryHooks = {
   submitImageDialog: function () {
     var button = $(this);
     var ckeditorFuncNum = getParamValue('CKEditorFuncNum');
-    var parent = (button.parents('#existing_image_area').length != 0) ?
-      $('#existing_image_area') : $('#upload_image_area');
+    var parent = $('#existing_image_area');
 
     // size should be 'small', 'medium', etc.
     var size = parent.find('.image_dialog_size.selected').children('a').attr('data-size');
@@ -39,10 +38,17 @@ var ckeditorRefineryHooks = {
     }
 
     var selectedImage = parent.find('ul li.selected img');
+    if (selectedImage.length == 0) {
+      alert('Please pick an image.');
+      return;
+    }
     var imageUrl = selectedImage.attr('data-' + size);
 
     window.opener.CKEDITOR.tools.callFunction(ckeditorFuncNum, imageUrl);
     window.close();
+  },
+
+  newImageSubmit: function() {
   },
 };
 
