@@ -7,7 +7,9 @@ var ckeditorRefineryHooks = {
       this.initializeImageHooks();
     }
 
-    // TODO: hooks for file browser and link browser
+    if (href.match(/\/pages_dialogs\/link_to/) && href.match(/ckeditor/i)) {
+      this.initializeLinkHooks();
+    }
   },
 
   initializeImageHooks: function () {
@@ -49,6 +51,37 @@ var ckeditorRefineryHooks = {
   },
 
   newImageSubmit: function() {
+  },
+
+  initializeLinkHooks: function() {
+    close_buttons = $('.close_dialog.button');
+    submit_button = $('#dialog_container .wymupdate.button');
+
+    close_buttons.unbind();
+    submit_button.unbind();
+
+    close_buttons.click(this.closeLinkDialog);
+    submit_button.click(this.submitLinkDialog);
+  },
+
+  closeLinkDialog: function () {
+    window.close();
+  },
+
+  submitLinkDialog: function () {
+    var button = $(this);
+    var ckeditorFuncNum = getParamValue('CKEditorFuncNum');
+    var parent = $('#dialog_main');
+
+    var selectedLink = parent.find('ul li.linked a');
+    if (selectedLink.length == 0) {
+      alert('Please pick a link.');
+      return;
+    }
+    var linkHref = selectedLink.attr('href');
+
+    window.opener.CKEDITOR.tools.callFunction(ckeditorFuncNum, linkHref);
+    window.close();
   },
 };
 
